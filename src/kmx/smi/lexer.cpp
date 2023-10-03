@@ -1,6 +1,6 @@
 // SMI Parser
 // Copyright (c) 2023 KMX Systems. All rights reserved.
-#include "smi/lexer.hpp"
+#include "kmx/smi/lexer.hpp"
 #ifndef PCH
     #include <array>
     #include <iostream>
@@ -9,7 +9,7 @@
     #include <utility>
 #endif
 
-namespace smi
+namespace kmx::smi
 {
     std::optional<token_t> find(const text_view_t& text)
     {

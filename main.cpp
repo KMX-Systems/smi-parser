@@ -1,9 +1,9 @@
 // SMI Parser
 // Copyright (c) 2023 KMX Systems. All rights reserved.
-#include <smi/lexer.hpp>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <kmx/smi/lexer.hpp>
 #include <vector>
 
 namespace stdext
@@ -28,16 +28,26 @@ namespace stdext
 
 int main()
 {
-    const auto mib_data = stdext::read_file("/home/io/Development/smi-parser/test/HUAWEI-POWER-MIB.mib");
-    const smi::text_view_t mib_data_view {mib_data.data(), mib_data.size()};
+    using namespace std;
 
-    for (smi::lexer lexer(mib_data_view); lexer; ++lexer)
+    const auto mib_data = stdext::read_file("HUAWEI-POWER-MIB.mib");
+    if (!mib_data.empty())
     {
-        using namespace std;
-        cout << setw(5) << lexer.line_no() << ':' << setw(3) << lexer.column_no() << ' ' << text_of(lexer.token());
-        if (lexer.token_value())
-            cout << '\t' << *lexer.token_value();
-        cout << endl;
+        using namespace kmx::smi;
+        const text_view_t mib_data_view {mib_data.data(), mib_data.size()};
+
+        for (kmx::smi::lexer lexer(mib_data_view); lexer; ++lexer)
+        {
+
+            cout << setw(5) << lexer.line_no() << ':' << setw(3) << lexer.column_no() << ' ' << text_of(lexer.token());
+            if (lexer.token_value())
+                cout << '\t' << *lexer.token_value();
+            cout << endl;
+        }
+    }
+    else
+    {
+        cout << "MIB file not found\n";
     }
 
     return 0;

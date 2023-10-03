@@ -8,8 +8,8 @@ CppApplication {
     //cpp.cxxFlags: "-fsanitize=address"
     //cpp.staticLibraries: "asan"
     files: [
-        "inc/smi/lexer.hpp",
-        "src/smi/lexer.cpp",
+        "inc/kmx/smi/lexer.hpp",
+        "src/kmx/smi/lexer.cpp",
         "main.cpp",
     ]
 

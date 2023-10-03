@@ -6,7 +6,7 @@
     #include <string_view>
 #endif
 
-namespace smi
+namespace kmx::smi
 {
     enum class token_t
     {
