@@ -38,7 +38,6 @@ int main()
 
         for (kmx::smi::lexer lexer(mib_data_view); lexer; ++lexer)
         {
-
             cout << setw(5) << lexer.line_no() << ':' << setw(3) << lexer.column_no() << ' ' << text_of(lexer.token());
             if (lexer.token_value())
                 cout << '\t' << *lexer.token_value();
