@@ -134,7 +134,6 @@ namespace kmx::smi
     using text_view_iterator_t = text_view_t::const_iterator;
     using optional_token_value_view_t = std::optional<text_view_t>;
 
-    std::optional<token_t> find(const text_view_t& view);
     const text_view_t& text_of(const token_t token);
 
     struct data
@@ -150,35 +149,37 @@ namespace kmx::smi
     class lexer: private data
     {
     public:
+        using tab_size_t = std::uint8_t;
+
         constexpr lexer() noexcept = default;
-        lexer(const text_view_t& data) noexcept;
+        lexer(const text_view_t& data, const tab_size_t tab_size = 4u) noexcept;
 
         void operator()(const text_view_t& data) noexcept;
         operator bool() const noexcept { return can_continue_; }
         void operator++() noexcept;
 
-        token_t token() const noexcept { return entity_.token; }
-        const optional_token_value_view_t& token_value() const noexcept { return entity_.token_value; }
+        token_t token() const noexcept { return entity_.token_; }
+        const optional_token_value_view_t& token_value() const noexcept { return entity_.token_value_; }
 
-        std::size_t line_no() const noexcept { return entity_.line_no_ + 1u; }
+        std::size_t line_no() const noexcept { return entity_.line_no(); }
         std::size_t column_no() const noexcept { return entity_.column_no(); }
 
-        std::uint8_t tab_size() const noexcept { return entity_.tab_size; }
-        void set_tab_size(const std::uint8_t item) noexcept { entity_.tab_size = item; }
+        tab_size_t tab_size() const noexcept { return entity_.tab_size_; }
+        void set_tab_size(const tab_size_t size) noexcept { entity_.tab_size_ = size; }
 
     private:
         struct entity: data
         {
             using data::operator=;
 
-            optional_token_value_view_t token_value {};
-            token_t token {};
-            std::uint8_t tab_size {4u};
+            optional_token_value_view_t token_value_ {};
+            token_t token_ {};
+            tab_size_t tab_size_;
 
-            std::size_t column_no() const noexcept
-            {
-                return static_cast<std::size_t>(pointer_ - line_pointer_) + (tab_size - 1u) * tab_count_ + 1u;
-            }
+            entity(const tab_size_t tab_size = 4u): tab_size_(tab_size) {}
+
+            std::size_t line_no() const noexcept { return line_no_ + 1u; }
+            std::size_t column_no() const noexcept;
         };
 
         void unexpected_char() noexcept;

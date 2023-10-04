@@ -11,7 +11,7 @@
 
 namespace kmx::smi
 {
-    std::optional<token_t> find(const text_view_t& text)
+    static std::optional<token_t> find(const text_view_t& text)
     {
         using map_t = const std::unordered_map<text_view_t, const token_t>;
         static const map_t map {{"ABSENT", token_t::absent},
@@ -240,7 +240,12 @@ namespace kmx::smi
         return std::isalnum(c) || (c == '-') || (c == '_');
     }
 
-    lexer::lexer(const text_view_t& data) noexcept
+    std::size_t lexer::entity::column_no() const noexcept
+    {
+        return static_cast<std::size_t>(pointer_ - line_pointer_) + (tab_size_ - 1u) * tab_count_ + 1u;
+    }
+
+    lexer::lexer(const text_view_t& data, const tab_size_t tab_size) noexcept: entity_(tab_size)
     {
         operator()(data);
     }
@@ -266,25 +271,25 @@ namespace kmx::smi
 
     void lexer::unexpected_char() noexcept
     {
-        entity_.token = token_t::unexpected_char;
+        entity_.token_ = token_t::unexpected_char;
         can_continue_ = {};
     }
 
     void lexer::incomplete_token() noexcept
     {
-        entity_.token = token_t::incomplete;
+        entity_.token_ = token_t::incomplete;
         can_continue_ = {};
     }
 
     void lexer::no_value() noexcept
     {
-        entity_.token_value.reset();
+        entity_.token_value_.reset();
         can_continue_ = pointer_ != end_;
     }
 
     void lexer::set_token(const token_t token) noexcept
     {
-        entity_.token = token;
+        entity_.token_ = token;
         no_value();
     }
 
@@ -296,8 +301,8 @@ namespace kmx::smi
 
     void lexer::set_token(const token_t token, const text_view_t& text) noexcept
     {
-        entity_.token = token;
-        entity_.token_value = text;
+        entity_.token_ = token;
+        entity_.token_value_ = text;
         can_continue_ = pointer_ != end_;
     }
 
@@ -340,8 +345,8 @@ namespace kmx::smi
 
         if (pointer_ < end_)
         {
-            entity_.token = token_t::quoted_string;
-            entity_.token_value = create_text_view();
+            entity_.token_ = token_t::quoted_string;
+            entity_.token_value_ = create_text_view();
             ++pointer_;
         }
 
@@ -528,7 +533,7 @@ namespace kmx::smi
     void lexer::dot() noexcept
     {
         entity_ = *this;
-        entity_.token = (pointer_ + 1 < end_) && (pointer_[1u] == '.') ? (pointer_ + 2 < end_) && (pointer_[2u] == '.') ?
+        entity_.token_ = (pointer_ + 1 < end_) && (pointer_[1u] == '.') ? (pointer_ + 2 < end_) && (pointer_[2u] == '.') ?
                                                                          (pointer_ += 3, token_t::triple_dot) :
                                                                          (pointer_ += 2, token_t::double_dot) :
                                                                          token_t::dot;
