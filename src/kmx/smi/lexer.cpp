@@ -550,154 +550,137 @@ namespace kmx::smi
 
     void lexer::scan() noexcept
     {
-restart:
-        switch (*pointer_)
-        {
-            case nl:
-                new_line();
-                if (can_continue_)
-                {
-                    goto restart;
-                }
-                break;
-            case '\r':
-                ++pointer_;
-                if (can_continue_)
-                {
-                    goto restart;
-                }
-                break;
-            case tab:
-                ++tab_count_;
-                [[fallthrough]];
-            case ' ':
-                space();
-                if (can_continue_)
-                {
-                    goto restart;
-                }
-                break;
-            case '-':
-                if (((pointer_ + 1) < end_) && (pointer_[1] == '-'))
-                {
-                    comment();
-                    if (can_continue_)
+        while (can_continue_)
+            switch (*pointer_)
+            {
+                case nl:
+                    new_line();
+                    break;
+                case '\r':
+                    ++pointer_;
+                    break;
+                case tab:
+                    ++tab_count_;
+                    [[fallthrough]];
+                case ' ':
+                    space();
+                    break;
+                case '-':
+                    if (((pointer_ + 1) < end_) && (pointer_[1] == '-'))
                     {
-                        goto restart;
+                        comment();
+                        break;
                     }
-                }
-                else
-                {
+
                     set_token_and_increment(token_t::minus);
-                }
-                break;
-            case '.':
-                dot();
-                break;
-            case ':':
-                definition_symbol();
-                break;
-            case ';':
-                set_token_and_increment(token_t::semicolon);
-                break;
-            case ',':
-                set_token_and_increment(token_t::comma);
-                break;
-            case '{':
-                set_token_and_increment(token_t::bracket_left);
-                break;
-            case '}':
-                set_token_and_increment(token_t::bracket_right);
-                break;
-            case '(':
-                set_token_and_increment(token_t::paren_left);
-                break;
-            case ')':
-                set_token_and_increment(token_t::paren_right);
-                break;
-            case '<':
-                set_token_and_increment(token_t::less_than);
-                break;
-            case '>':
-                set_token_and_increment(token_t::greater_than);
-                break;
-            case '\'':
-                check_special_number();
-                break;
-            case '"':
-                quoted_string();
-                break;
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                check_number();
-                break;
-            case 'A':
-            case 'B':
-            case 'C':
-            case 'D':
-            case 'E':
-            case 'F':
-            case 'G':
-            case 'I':
-            case 'L':
-            case 'M':
-            case 'N':
-            case 'O':
-            case 'P':
-            case 'R':
-            case 'S':
-            case 'T':
-            case 'U':
-            case 'V':
-            case 'W':
-                upper_case_string();
-                break;
-            case 'H':
-            case 'J':
-            case 'K':
-            case 'Q':
-            case 'X':
-            case 'Y':
-            case 'Z':
-            case 'a':
-            case 'b':
-            case 'c':
-            case 'd':
-            case 'e':
-            case 'f':
-            case 'g':
-            case 'h':
-            case 'i':
-            case 'j':
-            case 'k':
-            case 'l':
-            case 'm':
-            case 'n':
-            case 'o':
-            case 'p':
-            case 'q':
-            case 'r':
-            case 's':
-            case 't':
-            case 'u':
-            case 'v':
-            case 'w':
-            case 'x':
-            case 'y':
-            case 'z':
-                identifier();
-                break;
-            default:
-                unexpected_char();
-                break;
-        }
+                    return;
+                case '.':
+                    dot();
+                    return;
+                case ':':
+                    definition_symbol();
+                    return;
+                case ';':
+                    set_token_and_increment(token_t::semicolon);
+                    return;
+                case ',':
+                    set_token_and_increment(token_t::comma);
+                    return;
+                case '{':
+                    set_token_and_increment(token_t::bracket_left);
+                    return;
+                case '}':
+                    set_token_and_increment(token_t::bracket_right);
+                    return;
+                case '(':
+                    set_token_and_increment(token_t::paren_left);
+                    return;
+                case ')':
+                    set_token_and_increment(token_t::paren_right);
+                    return;
+                case '<':
+                    set_token_and_increment(token_t::less_than);
+                    return;
+                case '>':
+                    set_token_and_increment(token_t::greater_than);
+                    return;
+                case '\'':
+                    check_special_number();
+                    return;
+                case '"':
+                    quoted_string();
+                    return;
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    check_number();
+                    return;
+                case 'A':
+                case 'B':
+                case 'C':
+                case 'D':
+                case 'E':
+                case 'F':
+                case 'G':
+                case 'I':
+                case 'L':
+                case 'M':
+                case 'N':
+                case 'O':
+                case 'P':
+                case 'R':
+                case 'S':
+                case 'T':
+                case 'U':
+                case 'V':
+                case 'W':
+                    upper_case_string();
+                    return;
+                case 'H':
+                case 'J':
+                case 'K':
+                case 'Q':
+                case 'X':
+                case 'Y':
+                case 'Z':
+                case 'a':
+                case 'b':
+                case 'c':
+                case 'd':
+                case 'e':
+                case 'f':
+                case 'g':
+                case 'h':
+                case 'i':
+                case 'j':
+                case 'k':
+                case 'l':
+                case 'm':
+                case 'n':
+                case 'o':
+                case 'p':
+                case 'q':
+                case 'r':
+                case 's':
+                case 't':
+                case 'u':
+                case 'v':
+                case 'w':
+                case 'x':
+                case 'y':
+                case 'z':
+                    identifier();
+                    return;
+                default:
+                    unexpected_char();
+                    return;
+            }
     }
 }
