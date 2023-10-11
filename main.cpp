@@ -4,15 +4,16 @@
 #include <iomanip>
 #include <iostream>
 #include <kmx/smi/lexer.hpp>
+#include <kmx/smi/rule.hpp>
 #include <vector>
 
 namespace kmx
 {
     template <typename _Char = char>
-    std::vector<_Char> read_file(const std::string& file_name)
+    std::vector<_Char> read_file(const char* const file_name)
     {
         using namespace std;
-        ifstream file(file_name.data(), ios::in | ios::binary | ios::ate);
+        ifstream file(file_name, ios::in | ios::binary | ios::ate);
         if (file.is_open())
         {
             const auto file_size = file.tellg();
@@ -26,11 +27,17 @@ namespace kmx
     }
 }
 
-int main()
+int main(const int argc, const char* const argv[])
 {
     using namespace std;
 
-    const auto mib_data = kmx::read_file("HUAWEI-POWER-MIB.mib");
+    if (argc < 2)
+    {
+        cerr << "input MIB file not specified\n";
+        return -1;
+    }
+
+    const auto mib_data = kmx::read_file(argv[1u]);
     if (!mib_data.empty())
     {
         using namespace kmx::smi;
@@ -44,6 +51,10 @@ int main()
             tokens.push_back(token.id());
             cout << token << endl;
         }
+
+        auto iter = tokens.cbegin();
+        auto result = parse1(iter, tokens.cend());
+        cout << "parse: " << result << endl;
     }
     else
     {

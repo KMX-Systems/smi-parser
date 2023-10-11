@@ -8,11 +8,14 @@ CppApplication {
     //cpp.cxxFlags: "-fsanitize=address"
     //cpp.staticLibraries: "asan"
     files: [
-        "inc/kmx/smi/lexer.hpp",
         "inc/kmx/smi/token.hpp",
+        "inc/kmx/smi/lexer.hpp",
+        "inc/kmx/smi/rule.hpp",
+
         "src/kmx/smi/lexer.cpp",
-        "main.cpp",
         "src/kmx/smi/token.cpp",
+
+        "main.cpp",
     ]
 
     Group {     // Properties for the produced executable
