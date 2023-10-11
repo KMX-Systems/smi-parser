@@ -9,8 +9,10 @@ CppApplication {
     //cpp.staticLibraries: "asan"
     files: [
         "inc/kmx/smi/lexer.hpp",
+        "inc/kmx/smi/token.hpp",
         "src/kmx/smi/lexer.cpp",
         "main.cpp",
+        "src/kmx/smi/token.cpp",
     ]
 
     Group {     // Properties for the produced executable

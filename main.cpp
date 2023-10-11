@@ -6,7 +6,7 @@
 #include <kmx/smi/lexer.hpp>
 #include <vector>
 
-namespace stdext
+namespace kmx
 {
     template <typename _Char = char>
     std::vector<_Char> read_file(const std::string& file_name)
@@ -30,18 +30,19 @@ int main()
 {
     using namespace std;
 
-    const auto mib_data = stdext::read_file("HUAWEI-POWER-MIB.mib");
+    const auto mib_data = kmx::read_file("HUAWEI-POWER-MIB.mib");
     if (!mib_data.empty())
     {
         using namespace kmx::smi;
         const text_view_t mib_data_view {mib_data.data(), mib_data.size()};
 
-        for (kmx::smi::lexer lexer(mib_data_view); lexer; ++lexer)
+        vector<token::id> tokens {};
+        tokens.reserve(5000u);
+        for (lexer lexer(mib_data_view); lexer; ++lexer)
         {
-            cout << setw(5) << lexer.line_no() << ':' << setw(3) << lexer.column_no() << ' ' << text_of(lexer.token());
-            if (lexer.token_value())
-                cout << '\t' << *lexer.token_value();
-            cout << endl;
+            auto& token = lexer.token();
+            tokens.push_back(token.id());
+            cout << token << endl;
         }
     }
     else
