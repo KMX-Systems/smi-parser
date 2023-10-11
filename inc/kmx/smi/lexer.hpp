@@ -57,14 +57,14 @@ namespace kmx::smi
             const optional_value_t& value() const noexcept { return value_; }
             void set_value(const optional_value_t& item) noexcept { value_ = item; }
 
-            smi::token::id id() const noexcept { return id_; }
-            void set_id(const smi::token::id item) noexcept { id_ = item; }
+            token::id id() const noexcept { return id_; }
+            void set_id(const token::id item) noexcept { id_ = item; }
 
             void reset_value() noexcept { value_.reset(); }
 
         private:
             optional_value_t value_ {};
-            smi::token::id id_ {};
+            token::id id_ {};
         };
 
         std::ostream& operator<<(std::ostream& out, const data& item);
