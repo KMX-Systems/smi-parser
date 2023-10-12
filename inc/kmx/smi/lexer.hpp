@@ -29,7 +29,7 @@ namespace kmx::smi
         tab_size_t tab_size() const noexcept { return tab_size_; }
         void set_tab_size(const tab_size_t item) noexcept { tab_size_ = item; }
 
-        line_count_t line_no() const noexcept { return line_no_; }
+        line_count_t line_no() const noexcept { return line_no_ + 1u; }
         void set_line_no(const line_count_t item) noexcept { line_no_ = item; }
 
         column_count_t column_no() const noexcept;
